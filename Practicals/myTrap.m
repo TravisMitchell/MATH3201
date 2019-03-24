@@ -9,8 +9,7 @@ function myInt = myTrap(f, a, b, N)
     disp('Integrating function f (make sure f allows a vector input!):');  
     disp(f);
   else
-    disp('Please input f as a callable function');
-    break;
+    error('Please input f as a callable function');
   end
   
   h = (b-a)/N;
