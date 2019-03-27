@@ -163,5 +163,51 @@
 		Then again, summing these sub intervals over the full domain increases the order of error globally to, $O(h^4)$.
 		
 		The question now comes, is there a smart way to choose the step size $h$? This is where \textit{adaptive quadrature} comes into play. This technique allows us to have the computer determine whether finer resolution is necessary at certain points in our domain. For example, with the Trapezoidal rule, we can compare the integral for a single trapezoid with that of the same trapezoid computed with 2 half intervals. The error here can effectively be compared to a tolerance to determine if sufficient resolution has been used. 
-		
+
+\newpage
+\section{Week 5}
+    \subsection{Adaptive integration}
+      If may be common that we have a function or data set that we need to integrate, but there could be an `un-interesting' region as well as regions of rapid change - using a constant interval size for the full domain for such a circumstance can be computationally excessive. Additionally, it can be simpler and more convenient for a user to input in a tolerance they want to achieve with the integration rather than specifying an interval number.
+    	\subsubsection{Adaptive trapezoidal rule}
+    		Compare integration value for a region using a single trapezoid, $S_{[x_i,x_i{i+1}]}$, compared to two, $S_{[x_i,u_i]} + S_{[u_i,x_{i+1}]}$. From this we find that:
+    		\begin{align}
+    			\text{error}(S_{[x_i,x_i{i+1}]} - S_{[x_i,u_i]} - S_{[u_i,x_{i+1}]}) \approx 3\times \text{error} (S_{[x_i,u_i]} + S_{[u_i,x_{i+1}]})
+    		\end{align}
+    		Therefore, we can take our criterion for convergence as:
+    		\begin{align}
+    			| S_{[x_i,x_i{i+1}]} - S_{[x_i,u_i]} - S_{[u_i,x_{i+1}]} | < 3\times tol
+    		\end{align}
+    		Note that to achieve a specified tolerance, we need to account for the expected error when we half an interval. Therefore, when the algorithm fails the above criterion and we half our interval the required tolerance must also be halved.
+    		
+		\subsubsection{Adaptive Simpson's rule}
+		    Compare integration value for a region using a single trapezoid, $S_{[x_i,x_i{i+1}]}$, compared to two, $S_{[x_i,u_i]} + S_{[u_i,x_{i+1}]}$. From this we find that:
+			\begin{align}
+				\text{error}(S_{[x_i,x_i{i+1}]} - S_{[x_i,u_i]} - S_{[u_i,x_{i+1}]}) \approx 15\times \text{error} (S_{[x_i,u_i]} + S_{[u_i,x_{i+1}]}),
+			\end{align}
+			but as a conservative rule of thumb, 15 is replaced by 10.
+			
+		\subsection{Ordinal differential equations}
+			Wanting to work out numerical ways to solve problems of the type:
+			\begin{align}
+				\frac{dy}{dt} = f(t,y)
+			\end{align}
+			given the initial condition, $y(t_0)=y_0$. \\
+			
+			A simple way we can approach this is to expand about our initial condition with a Taylor series:
+			\begin{align}
+				y(t_0 + h) &= y(t_0) + hy'(t_0) + O(h^2) \\
+				&\approx y(t_0) + h f(t_0, y(t_0)) \\
+				&\vdots \\
+				\implies y_{n+1} &= y_n + hf(t_n, y_n)
+			\end{align}
+			Therefore, given our initial condition and the derivative we are able to progress the function $y(t)$ through time. This update rule is known as Euler's method, and in practice is not used due to the high order of error which adds up cumulatively as we move further in time. One possible option is to Taylor expand to higher orders, but in practice is also not done - however, from this thinking leads the family of Runge-Kutta methods for solving ODEs.
+			
+			\subsubsection{Runge-Kutta methods}
+			To obtain these, we often perform an expansion with Taylor series and then look at using the chain rule to breakdown higher order derivatives. Some common solvers that we will use in this class include:
+			\begin{itemize}
+				\item Runge-Kutta method of order 2 (also referred to as the midpoint rule)
+				\begin{align}
+					y_{n+1} = y_n + h f\left(t_n + \frac{h}{2}, y_n + \frac{h}{2} f(t_n,y_n)\right) + O(h^3)
+				\end{align}
+			\end{itemize}
 \end{document}
