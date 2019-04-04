@@ -3,7 +3,7 @@ function [tVals, yVals] = myEuler(t0, tf, y0, f, h)
   %    t0: an initial time / location
   %    tf: a final time to evaluate until
   %    y0: an initial value 
-  %     f: the derivative of our function y
+  %     f: the derivative of our function y,given as f(t,y)
   %     h: the step size to take
   
   % @TravisMitchell

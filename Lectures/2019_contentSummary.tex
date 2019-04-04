@@ -186,7 +186,7 @@
 			\end{align}
 			but as a conservative rule of thumb, 15 is replaced by 10.
 			
-		\subsection{Ordinal differential equations}
+	\subsection{Ordinal differential equations}
 			Wanting to work out numerical ways to solve problems of the type:
 			\begin{align}
 				\frac{dy}{dt} = f(t,y)
@@ -200,9 +200,9 @@
 				&\vdots \\
 				\implies y_{n+1} &= y_n + hf(t_n, y_n)
 			\end{align}
-			Therefore, given our initial condition and the derivative we are able to progress the function $y(t)$ through time. This update rule is known as Euler's method, and in practice is not used due to the high order of error which adds up cumulatively as we move further in time. One possible option is to Taylor expand to higher orders, but in practice is also not done - however, from this thinking leads the family of Runge-Kutta methods for solving ODEs.
+			Therefore, given our initial condition and the derivative we are able to progress the function $y(t)$ through time. This update rule is known as \textbf{Euler's method}, and in practice is not used due to the high order of error which adds up cumulatively as we move further in time. One possible option is to Taylor expand to higher orders, but in practice is also not done - however, from this thinking leads the family of Runge-Kutta methods for solving ODEs.
 			
-			\subsubsection{Runge-Kutta methods}
+		\subsubsection{Runge-Kutta methods}
 			To obtain these, we often perform an expansion with Taylor series and then look at using the chain rule to breakdown higher order derivatives. Some common solvers that we will use in this class include:
 			\begin{itemize}
 				\item Runge-Kutta method of order 2 (also referred to as the midpoint rule)
@@ -218,4 +218,37 @@
 					k_4 &= f\left(t_n + h, y_n + hk_3\right) \nonumber
 				\end{align}
 			\end{itemize}
+		The general method for deriving Runge-Kutta methods is given in Wk6 L1.
+\newpage
+\section{Week 6}
+	\subsection{Stiff problems - implicit methods}
+		Here, we formulated the integral over a section of the ODE by taking the height of a rectangle created at $y(t_{n+1})$, rather than $t_n$ which led to the forwards Euler method. By doing this, we came up with the implicit Euler method;
+		\begin{align}
+			y_{n+1} = y_n + h f(t_{n+1}, y_{n+1})
+		\end{align}
+		Taking this approach leads us to a system of equations to solve, for which something like Newton's method can be used to solve for the solution. This requires more computation than the forward Euler method, but has improved stability properties making it essential for certain problems.\\
+		\textbf{So what makes a problem stiff?} 
+		\begin{itemize}
+			\item ``If a numerical method with a  finite region of absolute stability applied to a system with any initial condition is forced to use, in a certain interval of integration, a step length which is excessively small in relation to the smoothness of the exact solution in that interval, then the system is said to be stiff in that interval;"
+			\item  Stiffness occurs when stability requirements, rather than those of accuracy, constrain the step size;
+			\item Stiffness occurs when some components of the solution decay much more rapidly than others.
+		\end{itemize}
+	\subsection{Systems of ODEs}
+		As most higher order ODEs can be written as a system of first order ODEs, we can use previously analysed methods to solve these. For example we can solve using Euler methods, but now we have vectors,
+		\newcommand{\bm}{\mathbf}
+		\newcommand{\np}{^{n+1}}
+		\begin{align}
+			\bm{y}\np = \bm{y}^n + h \bm{f} ( \bm{y}^n, t^n),
+		\end{align}
+		where $\bm{y}=\{y_1,y_2,...,y_n\}$, and $\bm{f}=\{f_1,f_2,...,f_n\}$. \\
+		
+		This can also be applied with higher order methods, such as the RK2 and RK4, previously shown for 1 variable.
+	\subsection{Boundary value problems for ODEs}
+		\subsubsection{Shooting method}
+			Here, rather than being given initial values allowing us to predict forward in time, here we are now given a start and end point that our solution must comply with, in general we can write this as,
+			\begin{align}
+				\frac{d^2 y}{dx^2} = f\left(x,y(x), \frac{dy}{dx}(x)\right), \quad y(a) = y_a \text{ and } y(b) = y_b.
+			\end{align}
+			The methodology is to first rewrite the second order problem as a system of first order ODEs. We then guess, for example, the initial derivative and use this to `shoot' at the final solution with an ODE solver. This process can be written into its own function, returning an error of our shoot compared to the boundary value, and hence a root finding method can be used to solve.
+		
 \end{document}
