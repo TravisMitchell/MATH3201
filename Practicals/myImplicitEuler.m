@@ -15,7 +15,7 @@ function [tVals, yVals] = myImplicitEuler(t0, tf, y0, f, h)
   yVals(1) = y0;
   
   for i = 1:N-1
-    tempFun = @(y) y - yVals(i) - h*f(tVals(i+1), y)  
-    yVals(i+1) = fzero(tempFun, yVals(i))
+    tempFun = @(y) y - yVals(i) - h*f(tVals(i+1), y)  ;
+    yVals(i+1) = fzero(tempFun, yVals(i));
   end
 end  

@@ -53,7 +53,10 @@ F = @(t, y) [0,1;2,1] * y + [0;cos(t)];
 y0 = -0.3; yf = -0.1;
 t0 =  0.0; tf =  pi/2;
 h  = 0.01;
-Shoot = @(alpha) yf - myRK4shoot(t0, tf, [y0; alpha],F,h); 
+function ydash = Shoot(alpha)
+    [tVals, yVals] = myRK4(t0, tf, [y0;alpha], F, h);
+    yf - yVals[1,end]; 
+end
 ydash0 = fzero(Shoot, 0.1);
 [tVals, yVals] = myRK4(t0, tf, [y0;ydash0], F, h);
 plot(tVals,yVals(1,:),'r-',[t0,tf],[y0,yf],'bo')

@@ -16,7 +16,7 @@ function [tVals, yVals] = myRK4(t0, tf, y0, f, h, dimension)
      error('Please input f as a callable function');
    end
    if ~exist('dimension','var')
-     dimension = 1;
+     dimension = length(y0);
    end
       
    tVals = t0:h:tf;           % Make tVals array
