@@ -71,7 +71,7 @@
 \begin{document}
 \maketitle
 \clearpage
-
+\chapter{}
 \section{Week 4}
 	\subsection{Recap of the first three weeks}
 		Started by looking at \textit{Taylor series} approximations for a function value $f(x)$ near a known point $f(a)$:
@@ -250,5 +250,102 @@
 				\frac{d^2 y}{dx^2} = f\left(x,y(x), \frac{dy}{dx}(x)\right), \quad y(a) = y_a \text{ and } y(b) = y_b.
 			\end{align}
 			The methodology is to first rewrite the second order problem as a system of first order ODEs. We then guess, for example, the initial derivative and use this to `shoot' at the final solution with an ODE solver. This process can be written into its own function, returning an error of our shoot compared to the boundary value, and hence a root finding method can be used to solve.
-		
+\chapter{}		
+\section{Week 8}
+	This section of the course looks at three topics:
+	\begin{enumerate}
+		\item Boundary Value Problems
+		\begin{enumerate}
+			\item For ODEs and for PDEs;
+			\item Using shooting method and finite difference methods.
+		\end{enumerate}
+		\item Interpolation
+		\begin{enumerate}
+			\item For finding a function that fits a data set;
+			\item Using polynomials and splines.
+		\end{enumerate}
+		\item Integration
+		\begin{enumerate}
+			\item Using Newton's method, adaptive quadrature, polynomials.
+		\end{enumerate}
+	\end{enumerate}
+	\subsection{The Shooting Method Continued}
+	The shooting method solves the BVP by finding the IVP that has the same solution, namely we construct the BVP as:
+	\begin{align}
+		y" &= f(x,y,y')\\
+		   &\text{with } y(a)=a,\quad y'(a)=s^*.
+	\end{align}
+	This IVP is solved and the resultant value, $y(b)$, is compared with the given boundary, $y_b$:
+	\begin{align}
+		F(s) = [y(b) - y_b]. \label{wk8:shoot}
+	\end{align}
+	We then seek the solution where, $F(s)=0$. Thus, we have rewritten the problem as a root finding situation that will give us an initial velocity to shoot at our given boundary value.
+	
+	\subsection{Finite Difference Method (FDM)}
+	Instead of rewriting the problem as an equation for which we need to find its root, with the FDM we try to write a system of equations that will allow us to solve the problem. To do this, we replace the continuous derivatives with their discrete approximations:
+	\begin{align}
+		y' &= \frac{y(x+\Delta x) - y(x-\Delta x)}{2\Delta x} \\
+		y''&= \frac{y(x+\Delta x) - 2y(x) + y(x-\Delta x)}{\Delta x^2}
+	\end{align}
+	These approximations are then substituted into our original PDE and applied at discrete points across the domain to be solved. This effectively gives us a closed set of simultaneous equations. Here, the boundaries $y_0,y_N$ are given and we are left with $N-1$ equations and unknowns, $y_1,...,y_{N-1}$. \\
+	
+	From here, the problem becomes an issue of solving for $\bx$ in a general system, $A\bx = b$. In this, $A$ is the coefficient matrix (typically diagonal), $\bx$ is our set of unknown variables and $b$ is a known vector.
+	
+	\subsubsection{Non-Linear BVP}
+	If we have a non-linear system, we can no longer write the problem in the form, $A\bx = b$. Here we again turn it into a bit of a root finding scenario: \\
+	e.g.
+	\begin{align}
+		y" &= 18y^2 \\
+		y_{i+1} - 2y_i + y_{i-1} &= 18h^2y_i^2
+	\end{align}
+	Rewrite in the form, $F(\mathbf{y}) = 0$:
+	\begin{align}
+		y_{i+1} - 2y_i - 18h^2y_i^2 + y_{i-1} &= 0		
+	\end{align}
+	We then look to use Newton's method to solve the system, $F_1,...F_{N-1} = \mathbf{0}$. Remember Newton's method for a system of equations is given by:
+	\begin{align}
+		\mathbf{y}^{j+1} = \mathbf{y}^j - J^{-1} (\mathbf{y}^j) F(\mathbf{y}^j)
+	\end{align}
+	
+	\section{Week 9}
+	\subsection{Partial Differential Equations}
+		\subsubsection{The Diffusion Equation}
+			To start with, we will look at methods to solve the diffusion equation:
+			\begin{align}
+				\partial_t u = D \partial_{xx} u
+			\end{align}
+			This can be used to govern the diffusion of heat in a bar or contaminant in a still room. To solve this problem, we need an initial state, $u(x,0)$, as well as boundary conditions, $u(a,t)$ and $u(b,t)$. To solve this, there are a few approaches, here we wills tart with the \textit{Forward Difference Method} - i.e. we take a forward difference for the temporal derivative.
+			\begin{align}
+				\text{Let } u(x_i,t_j) &= u_{i,j} \\
+				\frac{u_{i,j+1} - u_{i,j}}{\Delta t} &= D \left(\frac{u_{i+1,j} - 2u_{i,j} + u_{i-1,j}}{\Delta x^2} \right) \\
+				u_{i,j+1} &= u_{i,j} + \sigma \left( u_{i+1,j} - 2u_{i,j} + u_{i-1,j} \right), \quad \quad \sigma = \Delta t D/ \Delta x^2
+			\end{align}
+			Here we have explicitly written the next point in time directly from a previous time step. Explicit methods typically have stability constraints, for this particular case the constraint is:
+			\begin{align}
+				\sigma \leq 0.5
+			\end{align}
+			
+			To remove the constraint relating $\Delta t$ and $\Delta x$, we can look at implicit methods - namely, the \textit{Backwards Difference Method}:
+			\begin{align}
+				\text{Let } u(x_i,t_j) &= u_{i,j} \\
+				\frac{u_{i,j} - u_{i,j-1}}{\Delta t} &= D \left(\frac{u_{i+1,j} - 2u_{i,j} + u_{i-1,j}}{\Delta x^2} \right) \\
+				(1+2\sigma) u_{i,j} - \sigma(u_{i+1,j} + u_{i-1,j}) &= u_{i,j-1}
+			\end{align}
+			This can be written in matrix form, $B\mathbf{u}^{(j)} = \mathbf{u}^{(j-1)}$, for which we can solve to progress intime by taking the inverse of the matrix, $B$. This turns out to be unconditionally stable, although calculating the inverse of a large matrix can potentially be costly. 
+			
+		\subsubsection{The Wave Equation}
+			This Wave equation is used to describe, for example, the propagation of a wave along a string:
+			\begin{align}
+				\partial_{tt} u = c^2 \partial_{xx} u,
+			\end{align}
+			where $u=u(x,t)$, $c$ is the speed of sound. \\
+			
+			Therefore, we can replace our continuous derivatives with their discrete approximations:
+			\begin{align}
+				u_{i,j+1} - 2u_{i,j} + u_{i,j-1} &= \frac{c^2\Delta t^2}{\Delta x^2} \left(u_{i+1,j} - 2u_{i,j} + u_{i-1,j}\right) 
+			\end{align}
+			For this case, the CFL number is given by,
+			\begin{align}
+				\sigma = \frac{c\Delta t}{\Delta x} \leq 1
+			\end{align}
 \end{document}
