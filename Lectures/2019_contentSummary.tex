@@ -13,6 +13,7 @@
 \usepackage{tocloft}
 \usepackage{listings}
 \usepackage{graphicx}
+\usepackage{tikz}
 \usepackage{bigints}
 \usepackage{fourier}
 \usepackage{fancyhdr}
@@ -342,7 +343,7 @@
 			
 			Therefore, we can replace our continuous derivatives with their discrete approximations:
 			\begin{align}
-				u_{i,j+1} - 2u_{i,j} + u_{i,j-1} &= \frac{c^2\Delta t^2}{\Delta x^2} \left(u_{i+1,j} - 2u_{i,j} + u_{i-1,j}\right) 
+				u_{i,j+1} - 2u_{i,j} + u_{i,j-1} &= \frac{c^2\Delta t^2}{\Delta x^2} \left(u_{i+1,j} - 2u_{i,j} + u_{i-1,j}\right) \label{eqn:discreteWave}
 			\end{align}
 			For this case, the CFL number is given by,
 			\begin{align}
@@ -355,6 +356,51 @@
 				\begin{align}
 					u(x,t) = 0.5\left( h(x+ct) + h(x-ct) \right) + \frac{1}{2c} \int_{x-ct}^{x+ct} k(v) dv,
 				\end{align}
-				where $u(x,0)=h(x)$ and $\partial_t u (x,0) = k(x)$.			
+				where $u(x,0)=h(x)$ and $\partial_t u (x,0) = k(x)$.	\\
+				
+				So how do we solve equation \ref{eqn:discreteWave}? As we now have a larger \textit{stencil} than when we were looking at the diffusion/heat equation, we do need additional boundary conditions. In the lecture example the values surrounding the time/space domain were given, which left the interior as unknowns that we could write equations for - shown below with red unknown circles, black are known boundary values.
+				\begin{figure}[h!]
+					\centering
+					\begin{tikzpicture}
+					\draw[help lines, color=gray!30, dashed] (-1,-0.5) grid (5,2.5);
+					\draw[->, thick] (-1,0)--(5,0) node[right]{$x$};
+					\draw[->, thick] (0,-0.5)--(0,2.5) node[above]{$y$};
+					\filldraw[black] (0,0) circle (4pt) node[] {};
+					\filldraw[black] (1,0) circle (4pt) node[] {};
+					\filldraw[black] (2,0) circle (4pt) node[] {};
+					\filldraw[black] (3,0) circle (4pt) node[] {};
+					\filldraw[black] (4,0) circle (4pt) node[] {};
+					
+					\filldraw[black] (0,2) circle (4pt) node[] {};
+					\filldraw[black] (1,2) circle (4pt) node[] {};
+					\filldraw[black] (2,2) circle (4pt) node[] {};
+					\filldraw[black] (3,2) circle (4pt) node[] {};
+					\filldraw[black] (4,2) circle (4pt) node[] {};
+					
+					\filldraw[black] (0,1) circle (4pt) node[] {};
+					\filldraw[red] (1,1) circle (4pt) node[] {};
+					\filldraw[red] (2,1) circle (4pt) node[] {};
+					\filldraw[red] (3,1) circle (4pt) node[] {};
+					\filldraw[black] (4,1) circle (4pt) node[] {};
+				\end{tikzpicture}	
+			\end{figure}
 			
+			\subsubsection{Laplace Equation}
+				This can be used to describe the stead-state of (for example) the heat distribution on a surface:
+				\begin{align}
+					\partial_{xx} u + \partial_{yy} u &= 0 \\
+					\Delta u &= 0 \\
+					\nabla^2 u &= 0 
+				\end{align}
+				
+				If the RHS of these equations is a function, $f(x,y)$ we get the \textbf{Poisson Equation}. This is an import equation to solve and comes up in a number of areas (e.g solving pressure fields in computational fluid dynamics). So how do we solve this using the \textit{finite difference method}? Therefore, we wish to solve:
+				\begin{align}
+					\nabla^2 u = f(x,y)
+				\end{align}
+				Subject to Dirichlet (fixed value of $u$) and Neumann (fixed derivative of $u$) boundary conditions. Here we can think of the Neumann B.C. as a flux into our system. For simplicity, let us take $\Delta x = \Delta y = h$, than the discrete equation will become:
+				\begin{align}
+					u_{i+1,j} + u_{i-1,j} + u_{i,j+1} + u_{i,j-1} - 4u_{i,j} - h^2 f_{i,j} = 0
+				\end{align}
+				
+				Therefore, we can do a similar domain deconstruction as with the wave equation and write algebraic expressions for each unknown grid point.
 \end{document}
