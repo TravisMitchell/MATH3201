@@ -309,98 +309,179 @@
 	\end{align}
 	
 	\section{Week 9}
-	\subsection{Partial Differential Equations}
-	\subsubsection{The Diffusion Equation}
-	To start with, we will look at methods to solve the diffusion equation:
-	\begin{align}
-	\partial_t u = D \partial_{xx} u
-	\end{align}
-	This can be used to govern the diffusion of heat in a bar or contaminant in a still room. To solve this problem, we need an initial state, $u(x,0)$, as well as boundary conditions, $u(a,t)$ and $u(b,t)$. To solve this, there are a few approaches, here we wills tart with the \textit{Forward Difference Method} - i.e. we take a forward difference for the temporal derivative.
-	\begin{align}
-	\text{Let } u(x_i,t_j) &= u_{i,j} \\
-	\frac{u_{i,j+1} - u_{i,j}}{\Delta t} &= D \left(\frac{u_{i+1,j} - 2u_{i,j} + u_{i-1,j}}{\Delta x^2} \right) \\
-	u_{i,j+1} &= u_{i,j} + \sigma \left( u_{i+1,j} - 2u_{i,j} + u_{i-1,j} \right), \quad \quad \sigma = \Delta t D/ \Delta x^2
-	\end{align}
-	Here we have explicitly written the next point in time directly from a previous time step. Explicit methods typically have stability constraints, for this particular case the constraint is:
-	\begin{align}
-	\sigma \leq 0.5
-	\end{align}
-	
-	To remove the constraint relating $\Delta t$ and $\Delta x$, we can look at implicit methods - namely, the \textit{Backwards Difference Method}:
-	\begin{align}
-	\text{Let } u(x_i,t_j) &= u_{i,j} \\
-	\frac{u_{i,j} - u_{i,j-1}}{\Delta t} &= D \left(\frac{u_{i+1,j} - 2u_{i,j} + u_{i-1,j}}{\Delta x^2} \right) \\
-	(1+2\sigma) u_{i,j} - \sigma(u_{i+1,j} + u_{i-1,j}) &= u_{i,j-1}
-	\end{align}
-	This can be written in matrix form, $B\mathbf{u}^{(j)} = \mathbf{u}^{(j-1)}$, for which we can solve to progress intime by taking the inverse of the matrix, $B$. This turns out to be unconditionally stable, although calculating the inverse of a large matrix can potentially be costly. 
-	
-	\subsubsection{The Wave Equation}
-	This Wave equation is used to describe, for example, the propagation of a wave along a string:
-	\begin{align}
-	\partial_{tt} u = c^2 \partial_{xx} u,
-	\end{align}
-	where $u=u(x,t)$, $c$ is the speed of sound. \\
-	
-	Therefore, we can replace our continuous derivatives with their discrete approximations:
-	\begin{align}
-	u_{i,j+1} - 2u_{i,j} + u_{i,j-1} &= \frac{c^2\Delta t^2}{\Delta x^2} \left(u_{i+1,j} - 2u_{i,j} + u_{i-1,j}\right) \label{eqn:discreteWave}
-	\end{align}
-	For this case, the CFL number is given by,
-	\begin{align}
-	\sigma = \frac{c\Delta t}{\Delta x} \leq 1.
-	\end{align}
-	
+		\subsection{Partial Differential Equations}
+			\subsubsection{The Diffusion Equation}
+				To start with, we will look at methods to solve the diffusion equation:
+				\begin{align}
+				\partial_t u = D \partial_{xx} u
+				\end{align}
+				This can be used to govern the diffusion of heat in a bar or contaminant in a still room. To solve this problem, we need an initial state, $u(x,0)$, as well as boundary conditions, $u(a,t)$ and $u(b,t)$. To solve this, there are a few approaches, here we wills tart with the \textit{Forward Difference Method} - i.e. we take a forward difference for the temporal derivative.
+				\begin{align}
+				\text{Let } u(x_i,t_j) &= u_{i,j} \\
+				\frac{u_{i,j+1} - u_{i,j}}{\Delta t} &= D \left(\frac{u_{i+1,j} - 2u_{i,j} + u_{i-1,j}}{\Delta x^2} \right) \\
+				u_{i,j+1} &= u_{i,j} + \sigma \left( u_{i+1,j} - 2u_{i,j} + u_{i-1,j} \right), \quad \quad \sigma = \Delta t D/ \Delta x^2
+				\end{align}
+				Here we have explicitly written the next point in time directly from a previous time step. Explicit methods typically have stability constraints, for this particular case the constraint is:
+				\begin{align}
+				\sigma \leq 0.5
+				\end{align}
+				
+				To remove the constraint relating $\Delta t$ and $\Delta x$, we can look at implicit methods - namely, the \textit{Backwards Difference Method}:
+				\begin{align}
+				\text{Let } u(x_i,t_j) &= u_{i,j} \\
+				\frac{u_{i,j} - u_{i,j-1}}{\Delta t} &= D \left(\frac{u_{i+1,j} - 2u_{i,j} + u_{i-1,j}}{\Delta x^2} \right) \\
+				(1+2\sigma) u_{i,j} - \sigma(u_{i+1,j} + u_{i-1,j}) &= u_{i,j-1}
+				\end{align}
+				This can be written in matrix form, $B\mathbf{u}^{(j)} = \mathbf{u}^{(j-1)}$, for which we can solve to progress intime by taking the inverse of the matrix, $B$. This turns out to be unconditionally stable, although calculating the inverse of a large matrix can potentially be costly. 
+					
+			\subsubsection{The Wave Equation}
+				This Wave equation is used to describe, for example, the propagation of a wave along a string:
+				\begin{align}
+				\partial_{tt} u = c^2 \partial_{xx} u,
+				\end{align}
+				where $u=u(x,t)$, $c$ is the speed of sound. \\
+				
+				Therefore, we can replace our continuous derivatives with their discrete approximations:
+				\begin{align}
+				u_{i,j+1} - 2u_{i,j} + u_{i,j-1} &= \frac{c^2\Delta t^2}{\Delta x^2} \left(u_{i+1,j} - 2u_{i,j} + u_{i-1,j}\right) \label{eqn:discreteWave}
+				\end{align}
+				For this case, the CFL number is given by,
+				\begin{align}
+				\sigma = \frac{c\Delta t}{\Delta x} \leq 1.
+				\end{align}
+		
 	\section{Week 10}
-	\subsubsection{The Wave Equation conti.}
-	Went through one method to solve the wave equation analytically, and came up with \textbf{D'Alembert's formula:}
-	\begin{align}
-	u(x,t) = 0.5\left( h(x+ct) + h(x-ct) \right) + \frac{1}{2c} \int_{x-ct}^{x+ct} k(v) dv,
-	\end{align}
-	where $u(x,0)=h(x)$ and $\partial_t u (x,0) = k(x)$.	\\
-	
-	So how do we solve equation \ref{eqn:discreteWave}? As we now have a larger \textit{stencil} than when we were looking at the diffusion/heat equation, we do need additional boundary conditions. In the lecture example the values surrounding the time/space domain were given, which left the interior as unknowns that we could write equations for - shown below with red unknown circles, black are known boundary values.
-	\begin{figure}[h!]
-		\centering
-		\begin{tikzpicture}
-		\draw[help lines, color=gray!30, dashed] (-1,-0.5) grid (5,2.5);
-		\draw[->, thick] (-1,0)--(5,0) node[right]{$x$};
-		\draw[->, thick] (0,-0.5)--(0,2.5) node[above]{$y$};
-		\filldraw[black] (0,0) circle (4pt) node[] {};
-		\filldraw[black] (1,0) circle (4pt) node[] {};
-		\filldraw[black] (2,0) circle (4pt) node[] {};
-		\filldraw[black] (3,0) circle (4pt) node[] {};
-		\filldraw[black] (4,0) circle (4pt) node[] {};
+		\subsubsection{The Wave Equation conti.}
+			Went through one method to solve the wave equation analytically, and came up with \textbf{D'Alembert's formula:}
+			\begin{align}
+			u(x,t) = 0.5\left( h(x+ct) + h(x-ct) \right) + \frac{1}{2c} \int_{x-ct}^{x+ct} k(v) dv,
+			\end{align}
+			where $u(x,0)=h(x)$ and $\partial_t u (x,0) = k(x)$.	\\
+			
+			So how do we solve equation \ref{eqn:discreteWave}? As we now have a larger \textit{stencil} than when we were looking at the diffusion/heat equation, we do need additional boundary conditions. In the lecture example the values surrounding the time/space domain were given, which left the interior as unknowns that we could write equations for - shown below with red unknown circles, black are known boundary values.
+			\begin{figure}[h!]
+				\centering
+				\begin{tikzpicture}
+				\draw[help lines, color=gray!30, dashed] (-1,-0.5) grid (5,2.5);
+				\draw[->, thick] (-1,0)--(5,0) node[right]{$x$};
+				\draw[->, thick] (0,-0.5)--(0,2.5) node[above]{$y$};
+				\filldraw[black] (0,0) circle (4pt) node[] {};
+				\filldraw[black] (1,0) circle (4pt) node[] {};
+				\filldraw[black] (2,0) circle (4pt) node[] {};
+				\filldraw[black] (3,0) circle (4pt) node[] {};
+				\filldraw[black] (4,0) circle (4pt) node[] {};
+				
+				\filldraw[black] (0,2) circle (4pt) node[] {};
+				\filldraw[black] (1,2) circle (4pt) node[] {};
+				\filldraw[black] (2,2) circle (4pt) node[] {};
+				\filldraw[black] (3,2) circle (4pt) node[] {};
+				\filldraw[black] (4,2) circle (4pt) node[] {};
+				
+				\filldraw[black] (0,1) circle (4pt) node[] {};
+				\filldraw[red] (1,1) circle (4pt) node[] {};
+				\filldraw[red] (2,1) circle (4pt) node[] {};
+				\filldraw[red] (3,1) circle (4pt) node[] {};
+				\filldraw[black] (4,1) circle (4pt) node[] {};
+				\end{tikzpicture}	
+			\end{figure}
 		
-		\filldraw[black] (0,2) circle (4pt) node[] {};
-		\filldraw[black] (1,2) circle (4pt) node[] {};
-		\filldraw[black] (2,2) circle (4pt) node[] {};
-		\filldraw[black] (3,2) circle (4pt) node[] {};
-		\filldraw[black] (4,2) circle (4pt) node[] {};
+		\subsubsection{Laplace Equation}
+			This can be used to describe the stead-state of (for example) the heat distribution on a surface:
+			\begin{align}
+			\partial_{xx} u + \partial_{yy} u &= 0 \\
+			\Delta u &= 0 \\
+			\nabla^2 u &= 0 
+			\end{align}
+			
+			If the RHS of these equations is a function, $f(x,y)$ we get the \textbf{Poisson Equation}. This is an import equation to solve and comes up in a number of areas (e.g solving pressure fields in computational fluid dynamics). So how do we solve this using the \textit{finite difference method}? Therefore, we wish to solve:
+			\begin{align}
+			\nabla^2 u = f(x,y)
+			\end{align}
+			Subject to Dirichlet (fixed value of $u$) and Neumann (fixed derivative of $u$) boundary conditions. Here we can think of the Neumann B.C. as a flux into our system. For simplicity, let us take $\Delta x = \Delta y = h$, than the discrete equation will become:
+			\begin{align}
+			u_{i+1,j} + u_{i-1,j} + u_{i,j+1} + u_{i,j-1} - 4u_{i,j} - h^2 f_{i,j} = 0 \label{eqn:laplaceDiscrete}
+			\end{align}
+			
+			Therefore, we can do a similar domain deconstruction as with the wave equation and write algebraic expressions for each unknown grid point.
+	\section{Week 11}
+		\subsubsection{Laplace / Poisson's Equation Continued... Iterative solution methods!}
+			For this, we are going to look at three methods of solving our system of unknowns created when we write out the discrete form of the Laplace/Poisson equations for each node in our discrete domain:
+			\begin{enumerate}
+				\item Jacobi method;
+				\item Gauss-Seidel method;
+				\item Successive over-relaxation method.
+			\end{enumerate}
 		
-		\filldraw[black] (0,1) circle (4pt) node[] {};
-		\filldraw[red] (1,1) circle (4pt) node[] {};
-		\filldraw[red] (2,1) circle (4pt) node[] {};
-		\filldraw[red] (3,1) circle (4pt) node[] {};
-		\filldraw[black] (4,1) circle (4pt) node[] {};
-		\end{tikzpicture}	
-	\end{figure}
-	
-	\subsubsection{Laplace Equation}
-	This can be used to describe the stead-state of (for example) the heat distribution on a surface:
-	\begin{align}
-	\partial_{xx} u + \partial_{yy} u &= 0 \\
-	\Delta u &= 0 \\
-	\nabla^2 u &= 0 
-	\end{align}
-	
-	If the RHS of these equations is a function, $f(x,y)$ we get the \textbf{Poisson Equation}. This is an import equation to solve and comes up in a number of areas (e.g solving pressure fields in computational fluid dynamics). So how do we solve this using the \textit{finite difference method}? Therefore, we wish to solve:
-	\begin{align}
-	\nabla^2 u = f(x,y)
-	\end{align}
-	Subject to Dirichlet (fixed value of $u$) and Neumann (fixed derivative of $u$) boundary conditions. Here we can think of the Neumann B.C. as a flux into our system. For simplicity, let us take $\Delta x = \Delta y = h$, than the discrete equation will become:
-	\begin{align}
-	u_{i+1,j} + u_{i-1,j} + u_{i,j+1} + u_{i,j-1} - 4u_{i,j} - h^2 f_{i,j} = 0
-	\end{align}
-	
-	Therefore, we can do a similar domain deconstruction as with the wave equation and write algebraic expressions for each unknown grid point.
+		\subsubsection{Jacobi's Method}
+			This is perhaps the simplest method for solving systems such as, $A\mathbf{x} = b$, and gives a good basis for understanding more complex iterative schemes. In the past this method has not been overly used for practical solutions, however, with the advent of parallel programming - this is being reconsidered. To apply this scheme, we rearrange Equation \ref{eqn:laplaceDiscrete} to obtain,
+			\begin{align}
+				u_{i,j} &= \frac{1}{4} \left( u_{i+1,j} + u_{i-1,j} + u_{i,j+1} + u_{i,j-1} - h^2 f_{i,j} \right).
+			\end{align}
+			From here, we make an initial guess, $u_{i,j}^0$ and use this equation to update successive values of $u_{i,j}$ until we converge,
+			\begin{align}
+				u_{i,j}^{(n+1)} &= \frac{1}{4} \left( u_{i+1,j}^{(n)} + u_{i-1,j}^{(n)} + u_{i,j+1}^{(n)} + u_{i,j-1}^{(n)} - h^2 f_{i,j} \right).
+			\end{align}
+			The good thing about this method, is that it always converges, however, the convergence can be very slow.
+			
+		\subsubsection{Gauss-Seidel Method}
+			This method is a small variation on Jacobi's method in which, once we have calculated $u_{i,j}^{(n+1)}$, why not use it for the next point that we calculate? Namely, if we look at a point located at $(i,j)=(2,2)$, we have most likely already updated $u_{1,2}^{(n+1)}$ and $u_{2,1}^{(n+1)}$:
+			\begin{align}
+				u_{2,2}^{(n+1)} &= \frac{1}{4} \left( u_{3,2}^{(n)} + u_{1,2}^{(n+1)} + u_{2,3}^{(n)} + u_{2,1}^{(n+1)} - h^2 f_{2,2} \right).
+			\end{align}
+			
+		\subsubsection{Successive Over-Relaxation (SoR) Method}
+			Here we look to use a weighted average of the new and old values in our solution such that the previous example would become,
+			\begin{align}
+				u_{2,2}^{(n+1)} &= (1-\omega)u_{2,2}^{(n)} + \frac{\omega}{4} \left( u_{3,2}^{(n)} + u_{1,2}^{(n+1)} + u_{2,3}^{(n)} + u_{2,1}^{(n+1)} - h^2 f_{2,2} \right).
+			\end{align}
+			For this, we have,
+			\begin{align*}
+				\begin{cases}
+					\omega < 1, \quad& \text{under-relaxation} \implies \text{slows down convergence} \\
+					\omega = 1, \quad& \text{Gauss-Seidel} \\
+					\omega > 1, \quad& \text{over-relaxation}  \implies \text{speeds up convergence}
+				\end{cases}
+			\end{align*}
+			
+		\textit{Aside:} if we have flux boundary conditions, we can use the second order, three-part approximation,
+		\begin{align}
+			f'(x) = \frac{-3f(x) + 4f(x+h) - f(x+2h)}{2h} + O(h^2)
+		\end{align}
+		
+		\subsection{Interpolation}
+			The aim we have with interpolation for this section is to find a function that passes through a given data set. This allows us to determine values between data points as well as find lines of best fit. \\
+			\textit{Definition:} 
+			\begin{center}
+			A function, $y=f(x)$, interpolates data points, $(x_i,y_i)$, with $1\leq i \leq n$ if $f(x_i) = y_i$ $\forall i$.
+			\end{center}
+		
+			Here, we will discuss two methods of interpolation,
+			\begin{enumerate}
+				\item Polynomials: \\
+					This is useful as it gives us `straight forward' mathematical properties and allows us to evaluate complicated functions with elementary operators.
+					\begin{itemize}
+						\item Lagrangian Interpolation \\
+						Given $n$ data points $(x_1,y_1),\dots,(x_n,y_n)$, we can define a polynomial that interpolates this,
+						\begin{align}
+							P(x) &= \sum_{i=1}^n y_i L_i(x), quad \text{where} \\
+							&L_i(x) = \frac{(x-x_1)\dots(x-x_{i-1})(x-x_{i+1})\dots (x-x_n)}{(x_i-x_1)\dots(x_i-x_{i-1})(x_i-x_{i+1})\dots (x_i-x_n)} \nonumber
+						\end{align}
+						\item Newton's Divided Differences \\
+						Let $(x_i,y_i)$ where $i=1,\dots,n$ be $n$ data points with distinct $x_i$. There exists one and only one polynomial, $P$, of degree at most $(n-1)$ such that $P(x_i)=y_i$. For this, we can define the first divided difference,
+						\begin{align}
+							f[x_0,x_1] = \frac{f(x_1) - f(x_0)}{x_1-x_0},
+						\end{align}
+						and the second divided diffence as,
+						\begin{align}
+							f[x_0, x_1,x_2] = \frac{f[x_1,x_2]-f[x_0,x_1]}{x_2-x_0}.
+						\end{align}
+						From this, we can define the polynomial that fits the data points as,
+						\begin{align}
+							f(x) = f(x_0) &+ f[x_0,x_1] + (x-x_0)(x-x_1)f[x_0,x_1,x_2] + \dots \\ 
+										  &+ (x-x_0)(x-x_1)\dots(x-x_k) f[x_0,x_1,\dots,x_k]
+						\end{align}
+						
+					\end{itemize}
+				\item Splines:
+			\end{enumerate}
 \end{document}
