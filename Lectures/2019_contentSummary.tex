@@ -463,7 +463,7 @@
 						\item Lagrangian Interpolation \\
 						Given $n$ data points $(x_1,y_1),\dots,(x_n,y_n)$, we can define a polynomial that interpolates this,
 						\begin{align}
-							P(x) &= \sum_{i=1}^n y_i L_i(x), quad \text{where} \\
+							P(x) &= \sum_{i=1}^n y_i L_i(x), \quad \text{where} \\
 							&L_i(x) = \frac{(x-x_1)\dots(x-x_{i-1})(x-x_{i+1})\dots (x-x_n)}{(x_i-x_1)\dots(x_i-x_{i-1})(x_i-x_{i+1})\dots (x_i-x_n)} \nonumber
 						\end{align}
 						\item Newton's Divided Differences \\
@@ -482,6 +482,84 @@
 						\end{align}
 						
 					\end{itemize}
-				\item Splines:
 			\end{enumerate}
+		
+		\section{Week 12}
+		\begin{itemize}
+			\item Chebyshev Theorem \\
+				Given $n$ data points on the interval $\left[ a,b\right]$, the interpolation error is minimised if $n$ data points are moved to Chebyshev's points (roots),
+				\begin{align}
+					x_i = \frac{b-a}{2} \cos \left(\frac{(2i-1)\pi}{2n} \right) + \frac{b+a}{2}, \quad \quad i=1,\dots,n.
+				\end{align}
+				This way (moving data points) the numerator error is minimised a determinable upper bound,
+				\begin{align}
+					(x-x_1)(x-x_2)\dots(x-x_n) \leq \frac{(b-a)^n}{2^{2n-1}}.
+				\end{align}
+		\end{itemize}
+		\begin{enumerate}
+			\setcounter{enumi}{1}
+			\item Splines \\
+				In polynomial interpolation we used a single polynomial to interpolate between all data points. With splines, we now use up to $(n-1)$ polynomials to interpolate $n$ points. Here, it is common practice to use cubic polynomials, which is sufficient to satisfy;
+				\begin{itemize}
+					\item spline is continuous;
+					\item spline is smooth;
+					\item spline has some curvature.
+				\end{itemize}
+			For a \textit{natural spline}, we also have the condition that $s_1''(x_1)=s''_{n-1}(x_{n-1})=0$. \\
+			
+			From all of these conditions, we end up with $3(n-1)$ equations and $3(n-1)$ unknowns. Namely, we have $(n-1)$ points and three coefficients at each to calculate. Therefore, we take our approximation,
+			\begin{align}
+				s_i(x) = a_i + b_i(x-x_i) + c_i(x-x_i)^2 + d_i(x-x_i)^3, \qquad a_i = y_i,
+			\end{align}
+			and seek to determine $b_i,c_i,d_i$. This is done by taking,
+			\begin{align}
+				\delta_i &= x_{i+1} - x_i \\
+				\Delta_i &= y_{i+1} - y_i,
+			\end{align}
+			such that we can define $b,d$ in terms of $c$ as,
+			\begin{align}
+				d_i &= \frac{c_{i+1}-c_i}{3*J_i},\\
+				b_i &= \frac{\Delta_i}{\delta_i} - \frac{\delta_i}{3} (2c_i+c_{i+1}).
+			\end{align}
+			To solve for $c_i$, the equations from the above spline conditions allow us to write,
+			\begin{align}
+			\begin{pmatrix}
+				1 		 & 	0 						& 	0 			& \dots & \dots \\
+				\delta_1 &	2(\delta_1+\delta_2)	&	\delta_2	& 0		& \dots \\
+				0		 &	\delta_2		& 2(\delta_2+\delta_3)	& \delta_3 & \dots \\
+				\vdots	 &	\ddots			& \ddots				&\ddots	& \ddots \\
+				0		 & 0				& 0						& 0		& 1
+			\end{pmatrix} \begin{pmatrix}
+			c_1 \\ c_2 \\ \vdots \\ \vdots \\ c_n
+			\end{pmatrix} = 
+			\begin{pmatrix}
+			0 \\ 3 (\Delta_2/\delta_2 - \Delta_1/\delta_1) \\ \vdots \\ 3 (\Delta_{n-1}/\delta_{n-1} - \Delta_{n-2}/\delta_{n-2}) \\ 0
+			\end{pmatrix}
+			\end{align}
+		\end{enumerate}
+	
+		\subsection{Extrapolation}
+			Rather than interpolating within the range of data we have, we will now look at methods for extrapolating beyond our given range.
+			\subsubsection{Richardson's Extrapolation Method}
+				Here the idea is to use multiple step sizes to improve the approximation,
+				\begin{align}
+					v_t&\approx v_a(h) + kh^n \\
+					v_t&\approx v_a(h/2) + k (h/2)^n \\
+					\implies &v_t(1-2^n) \approx v_a(h)-2^n v_a(h/2),
+				\end{align}
+				therefore, our extrapolated approximation becomes,
+				\begin{align}
+					v_t \approx v_a(h/2) + \frac{v_a (h/2) - v_a(h)}{2^n-1}.
+				\end{align}
+		\subsection{Numerical Integration}
+		\begin{enumerate}
+			\item Newton-Cotes formulas, estimate integration with equally spaced points
+			\begin{enumerate}
+				\item Trapezoidal rule
+				\item Simpson's rule
+				\item Romberg rule (extrapolation.)
+			\end{enumerate}
+			\item Adaptive quadrature \\
+			Numerical integration is based on evaluating integral by adapting size of intervals. 
+		\end{enumerate}
 \end{document}
