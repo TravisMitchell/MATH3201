@@ -562,4 +562,84 @@
 			\item Adaptive quadrature \\
 			Numerical integration is based on evaluating integral by adapting size of intervals. 
 		\end{enumerate}
+	
+	\section{Week 13}
+	\subsection{Revisiting composite Simpson's rule}
+	Here, we apply Simpson's rule over sub-intervals in our domain giving the general expression,
+	\begin{align}
+		\int_a^b f(x) dx \approx \frac{h}{3} \left( y_0 + y_{2m} + 4\sum_{i=1}^m y_{2i-1} + 2\sum_{i=1}^{m-1} y_{2i} \right),
+	\end{align}
+	where we have discretised our interval such that,
+	\begin{align}
+		a = x_0 < x_1 < x_2<\dots < x_{2m} = b.
+	\end{align}
+	From this we end up with an error term,
+	\begin{align}
+		\varepsilon &= \frac{h^5}{90} mf^{(4)} (c), \qquad a\leq c\leq b \text{ and } m2h=(b-a),\\
+		&= \frac{(b-a)h^4}{180}f^{(4)} (c).
+	\end{align}
+	
+	\subsection{Romberg Integration}
+	\textit{Idea:} approximate the integration over step sizes, $h,h/2,h/4,\dots$, then extrapolate to obtain better approximations again and again. \\
+	
+	Here, for example the Trapezoidal rule could be used and we would obtain,
+	\begin{align}
+		R_{1,1} &\approx \frac{h_1}{2} \left[ f(a) + f(b) \right] \\
+		R_{2,1} &\approx \frac{h_2}{2} \left[ f(a) + f(b) + 2 f\left(\frac{a+b}{2}\right)\right] =\frac{1}{2} R_{1,1} + h_2 f\left(\frac{a+b}{2}\right)\\
+		\vdots & \\
+		R_{j,1} &\approx \frac{1}{2} R_{j-1,1} + h_j \sum_{i=1}^{2^{(j-2)}} f\left(a+(2i-1)h_j\right) 
+	\end{align}
+	This is a model to calculate the composite Trapezoidal rule incrementally by decreasing step size, $h$. \\
+	
+	Now look to calculate extrapolations,
+	\begin{align}
+		\int_a^b f(x) dx \approx \frac{h}{2} \left(y_0 y_m + 2 \sum_{i=1}^{m-1}y_i\right) + c_2h^2 +c_4h^4 + \dots
+	\end{align}
+	Therefore, this is $O(h^2)$, but the first order extrapolation would then become $4^{th}$ order,
+	\begin{align}
+	 R_{2,2} &\approx R_{2,1} + \frac{R_{2,1}-R_{1,1}}{3} \\
+	 R_{3,2} &\approx R_{3,1} + \frac{R_{3,1}-R_{2,1}}{3} \\
+	 R_{4,2} &\approx R_{4,1} + \frac{R_{4,1}-R_{3,1}}{3} 
+	\end{align}
+	The error in this second column is $O(h^4)$, we can extrapolate the third column,
+	\begin{align}
+		R_{3,3} &\approx R_{3,2} + \frac{R_{3,2} - R_{2,2}}{4^2-1} \\
+		R_{4,2} &\approx \dots
+	\end{align}
+	
+	In general, to calculate $R_{j,k}$ in Romberg's method, 
+	\begin{align}
+		R_{j,k} &= \frac{4^{k-1} R_{j,k-1} - R_{j-1,k-1}}{4^{k-1} - 1} \\
+				&= R_{j,k-1} + \frac{R_{j,k-1} - R_{j-1,k-1}}{4^{k-1} - 1}
+	\end{align} 
+	
+	\subsection{Adaptive Quadrature}
+	\textit{Idea:} refine sub-intervals adaptively over the integration domain.
+	
+	To apply this, we effectively half our grid size and compare the integration of the larger step size to the smaller. From this, we predict the expected error value and compare it to a tolerance. If this is not met than the step size is again reduced.
+	
+	\subsection{Gaussian Quadrature}
+	\textit{Idea:} evaluate teh wegihted sum of function values at specified points (Legendre roots) within the integration domain.
+	\begin{align}
+		\int_a^b f(x) dx \approx \sum_{i=1}^n c_i f(x_i),
+	\end{align}
+	where, $c_i$, are our weights, $x_i$, are the Legendre roots and, $n$, is the number of evaluation points.
+	
+	We then went through examples of 1- and 2- point approximations leading to our $n$-point Gaussian Quadrature rule which is typically defined on the domain from -1 to 1,
+	\begin{align}
+		\int_{-1}^1 f(x) dx \approx \sum_{i=1}^{n} c_i f(x_i),
+	\end{align}
+	where we can approximate $f(x)$ with (for example), a polynomial in order to find the desired weights. To reach the general form, we may need to convert our integration limits, for which a linear transformation can be applied,
+	\begin{align}
+		x&=mt + c, \\
+		 &=\frac{b-a}{2} t + \frac{b+a}{2} \\
+		 \therefore dx &= \frac{b-a}{2} dt
+	\end{align}
+	From this, we can re-write the integral as,
+	\begin{align}
+		\int_{a}^b f(x) dx = \frac{b-a}{2}  \int_{-1}^1 f\left(\frac{b-a}{2} t + \frac{b+a}{2}\right) dt
+	\end{align}
+	
+	\centering
+	\textbf{END OF COURSE CONTENT!}
 \end{document}
